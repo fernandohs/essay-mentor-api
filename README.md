@@ -185,7 +185,7 @@ async def test_health():
 |:------|:-----|
 | A | Base structure, models, routers, healthcheck ✅ |
 | B | Implement prompts and utils/json\_parse.py |
-| C | LLM adapters (Ollama, OpenAI) |
+| C | LLM adapters (Ollama, OpenAI) ✅ |
 | D | Services: analyzer.py and guidance.py |
 | E | Unit & integration tests |
 | F | Dockerfile + CI/CD + deployment |

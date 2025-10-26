@@ -9,6 +9,7 @@ python-dotenv==1.0.1
 
 # --- HTTP requests (para adapters LLM) ---
 requests==2.32.3
+types-requests==2.32.4.20250913  # Type stubs for requests
 
 # --- (Opcional pero recomendado) Tests, formato y linting ---
 pytest==8.3.3
