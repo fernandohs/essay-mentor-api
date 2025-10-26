@@ -16,7 +16,7 @@ Its goal is to provide automated tools to:
       * *Reservation*
       * *Rebuttal*
 
-The project currently uses local models ( like Llama 3 through **Ollama**) and can easily connect to GPT models in the future via its adapter layer.
+The project currently uses local models (like Llama 3 through **Ollama**) and can easily connect to GPT models in the future via its adapter layer.
 
 -----
 
@@ -66,72 +66,134 @@ essay-mentor-api/
 -----
 
 ## ⚙️ Installation
-# 1. Clone the repository
+
+### 1\. Clone the repository
+
+```bash
 git clone https://github.com/<your-username>/essay-mentor-api.git
 cd essay-mentor-api
-# 2. Create virtual environment
+```
+
+### 2\. Create virtual environment
+
+```bash
 python -m venv .venv
 source .venv/bin/activate  # (Windows: .venv\Scripts\activate)
-# 3. Install dependencies
+```
+
+### 3\. Install dependencies
+
+```bash
 pip install -r requirements.txt
-# 4. Configure environment variables
+```
+
+### 4\. Configure environment variables
+
+```bash
 cp .env.example .env
 # Edit values for Ollama or GPT usage
-***▶️ Run the API
+```
+
+-----
+
+## ▶️ Run the API
+
+```bash
 uvicorn app.main:app --reload
-Swagger UI:  
-👉 http://localhost:8000/docs  
-OpenAPI JSON:  
-👉 http://localhost:8000/openapi.json
-***🧠 Main Endpoints
+```
+
+  * **Swagger UI:**
+    👉 `http://localhost:8000/docs`
+  * **OpenAPI JSON:**
+    👉 `http://localhost:8000/openapi.json`
+
+-----
+
+## 🧠 Main Endpoints
+
 | Method | Route | Description |
-|:--|:--|:--|
-| GET | /health | Check API health and LLM provider |
-| POST | /analyze/ai-likelihood | Estimate AI-generated likelihood |
-| POST | /analyze/feedback | Generate structured writing feedback |
-| POST | /guide | Provide guidance for essay sections |
-| POST | /guide/check-section | Review a section and suggest improvements |
-***🧩 Example Request
+|:---|:---|:---|
+| `GET` | `/health` | Check API health and LLM provider |
+| `POST` | `/analyze/ai-likelihood` | Estimate AI-generated likelihood |
+| `POST` | `/analyze/feedback` | Generate structured writing feedback |
+| `POST` | `/guide` | Provide guidance for essay sections |
+| `POST` | `/guide/check-section` | Review a section and suggest improvements |
+
+-----
+
+## 🧩 Example Request
+
+```json
 POST /analyze/ai-likelihood
 Content-Type: application/json
+
 {
   "text": "This essay argues that empathy plays a key role in education.",
   "section": "claim"
 }
-***🧰 Technical Requirements
-Python ≥ 3.10  
-FastAPI ≥ 0.115  
-(Optional) Ollama running locally at http://localhost:11434  
-  ollama pull llama3.1
-  ollama serve
-  
-***🧱 Best Practices
-Clean Architecture: routers → services → adapters → models.  
-Environment-based configuration using pydantic-settings.  
-Strong Pydantic validation: character limits, literals, nested models.  
-Robust JSON parsing from LLM responses.  
-Bilingual support (en/es) for essay sections.  
-No circular dependencies.  
-Ready for Docker or production deployment with uvicorn/gunicorn.
-***🧪 Unit Testing (Optional)
+```
+
+-----
+
+## 🧰 Technical Requirements
+
+  * Python $\ge$ 3.10
+  * FastAPI $\ge$ 0.115
+  * **(Optional)** Ollama running locally at `http://localhost:11434`
+    ```bash
+    ollama pull llama3.1
+    ollama serve
+    ```
+
+-----
+
+## 🧱 Best Practices
+
+  * Clean Architecture: `routers` → `services` → `adapters` → `models`.
+  * Environment-based configuration using `pydantic-settings`.
+  * Strong Pydantic validation: character limits, literals, nested models.
+  * Robust JSON parsing from LLM responses.
+  * Bilingual support (`en`/`es`) for essay sections.
+  * No circular dependencies.
+  * Ready for Docker or production deployment with `uvicorn`/`gunicorn`.
+
+-----
+
+## 🧪 Unit Testing (Optional)
+
+```bash
 pytest -q
+```
+
 Recommended to use Httpx for endpoint testing:
+
+```python
 from httpx import AsyncClient
 from app.main import app
+
 async def test_health():
     async with AsyncClient(app=app, base_url="http://test") as ac:
         res = await ac.get("/health")
         assert res.status_code == 200
-***🧭 Development Roadmap
+```
+
+-----
+
+## 🧭 Development Roadmap
+
 | Phase | Goal |
-|------|------|
+|:------|:-----|
 | A | Base structure, models, routers, healthcheck ✅ |
-| B | Implement prompts and utils/json_parse.py |
+| B | Implement prompts and utils/json\_parse.py |
 | C | LLM adapters (Ollama, OpenAI) |
 | D | Services: analyzer.py and guidance.py |
 | E | Unit & integration tests |
 | F | Dockerfile + CI/CD + deployment |
-***👨‍💻 Author
-Fernando Herrera Sánchez  
-Software Engineer 💡  
+
+-----
+
+## 👨‍💻 Author
+
+Fernando Herrera Sánchez
+Software Engineer 💡
 📍 México
