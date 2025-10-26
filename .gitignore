@@ -1,0 +1,64 @@
+# === Python general ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+*.log
+
+# === Virtual environments ===
+.venv/
+venv/
+env/
+ENV/
+
+# === FastAPI / local settings ===
+.env
+.env.*
+.DS_Store
+*.db
+*.sqlite3
+
+# === Caches ===
+.pytest_cache/
+.mypy_cache/
+ruff_cache/
+__pypackages__/
+.cache/
+.idea/
+.vscode/
+
+# === Build / dist ===
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# === Coverage / testing ===
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# === Docker ===
+*.pid
+docker-compose.override.yml
+*.bak
+*.tmp
+
+# === Reports ===
+logs/
+reports/
+*.log
+*.out
+*.err
+
+# === Editor / OS files ===
+Thumbs.db
+.DS_Store
+*.swp
+*.swo
+*~
