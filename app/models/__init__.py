@@ -7,6 +7,7 @@ from .analyze import (
 from .guide import (
     GuideRequest, GuidanceResponse,
     SectionCheckRequest, SectionAdviceResponse,
+    Language,
 )
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "FeedbackRequest", "FeedbackResponse", "CriterionFeedback",
     "GuideRequest", "GuidanceResponse",
     "SectionCheckRequest", "SectionAdviceResponse",
+    "Language",
 ]

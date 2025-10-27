@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     
     # LLM Generation Parameters - Default settings
     LLM_TEMPERATURE: float = 0.3  # Default temperature for general use cases
-    LLM_NUM_PREDICT: int = 256    # Maximum number of tokens to generate
+    LLM_NUM_PREDICT: int = 512    # Maximum number of tokens to generate (increased for complete responses)
     
     # LLM Temperature Presets (creativity levels)
     # Use these semantic constants to control AI creativity vs precision
@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     LLM_TEMP_BALANCED: float = 0.3       # Balanced precision with some variability (feedback, structured analysis)
     LLM_TEMP_CREATIVE: float = 0.6       # Balanced creativity for guidance and suggestions (essay improvement tips)
     LLM_TEMP_HIGHLY_CREATIVE: float = 0.9  # High creativity, maximum randomness (brainstorming, idea generation)
+    
+    # Language Settings
+    DEFAULT_LANGUAGE: str = "es"  # Default language for LLM responses (en=English, es=Spanish)
 
     class Config:
         env_file = ".env"

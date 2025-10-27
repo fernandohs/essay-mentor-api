@@ -11,12 +11,22 @@ python-dotenv==1.0.1
 requests==2.32.3
 types-requests==2.32.4.20250913  # Type stubs for requests
 
-# --- (Opcional pero recomendado) Tests, formato y linting ---
-pytest==8.3.3
-httpx==0.27.2        # Cliente HTTP async para tests
-black==24.8.0        # Formateador de código
-ruff==0.6.2          # Linter rápido (reemplaza flake8 + isort)
-mypy==1.13.0         # Chequeo de tipos estáticos
+# --- LLM integration libraries (optional, for advanced features) ---
+langchain>=0.3.0,<0.4.0        # High-level LLM orchestration and prompts
+langchain-openai>=0.2.0        # LangChain integration with OpenAI
+langchain-community>=0.3.0     # Community integrations (Ollama support)
 
-# --- (Opcional) OpenAI SDK (para el futuro adapter GPT) ---
+# --- (Optional) OpenAI SDK (for future GPT adapter) ---
 openai==1.46.0
+
+# --- (Optional but recommended) Tests, code formatting and linting ---
+pytest==8.3.3
+pytest-asyncio==0.23.8        # Async testing support
+httpx==0.27.2                 # HTTP client async for tests
+black==24.8.0                 # Code formatter
+ruff==0.6.2                   # Fast linter (replaces flake8 + isort)
+mypy==1.13.0                  # Static type checking
+
+# --- Production & deployment ---
+gunicorn==23.0.0              # Production WSGI server
+python-multipart==0.0.12      # For handling multipart/form-data in FastAPI
