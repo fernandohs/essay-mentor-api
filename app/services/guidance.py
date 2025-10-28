@@ -41,12 +41,12 @@ def get_section_guidance(section: Section, language: str = "en") -> GuidanceResp
         # 1. Generate prompt using factory
         prompt = generate_prompt_for_guidance(section, language)
         
-        # 2. Call LLM with creative temperature and more tokens for guidance responses
+        # 2. Call LLM with creative temperature and structured tokens for guidance responses
         llm_adapter = get_llm_adapter()
         llm_response = llm_adapter.generate(
             prompt, 
             temperature=settings.LLM_TEMP_CREATIVE,
-            num_predict=1024  # Need more tokens for structured guidance output
+            num_predict=settings.LLM_TOKENS_STRUCTURED  # Structured data responses (guidance with steps, checklist, examples)
         )
         
         # 3. Parse JSON response
@@ -94,12 +94,12 @@ def check_section_quality(section: Section, text: str, language: Optional[str] =
         # 1. Generate prompt using factory
         prompt = generate_prompt_for_section_check(section, text, language)
         
-        # 2. Call LLM with creative temperature for feedback and more tokens
+        # 2. Call LLM with creative temperature and structured tokens for feedback
         llm_adapter = get_llm_adapter()
         llm_response = llm_adapter.generate(
             prompt, 
             temperature=settings.LLM_TEMP_CREATIVE,
-            num_predict=1024  # Need more tokens for structured feedback
+            num_predict=settings.LLM_TOKENS_STRUCTURED  # Structured data responses (section advice with strengths, issues, questions)
         )
         
         # 3. Parse JSON response

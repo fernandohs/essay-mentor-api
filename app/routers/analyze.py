@@ -3,7 +3,12 @@ from app.models import (
     AILikelihoodRequest, AILikelihoodResponse,
     FeedbackRequest, FeedbackResponse,
 )
-from app.services import analyze_ai_likelihood, generate_essay_feedback
+from app.services import analyze_ai_likelihood, generate_essay_feedback, get_criteria_metadata
+
+# Get criteria metadata for documentation at module level
+_criteria_metadata = get_criteria_metadata()
+CRITERIA_DOC = _criteria_metadata["summary"]
+TOTAL_POINTS = _criteria_metadata["total_points"]
 
 router = APIRouter(prefix="/analyze", tags=["analyze"])
 
@@ -18,19 +23,13 @@ def ai_likelihood(req: AILikelihoodRequest):
 
 @router.post("/feedback", response_model=FeedbackResponse)
 def feedback(req: FeedbackRequest):
-    """
+    f"""
     Generate structured feedback on an essay based on evaluation criteria.
     
     **Default Criteria** (used if none specified):
-    - originalidad (22pts): Creative approaches, metaphors, unexpected comparisons
-    - profundidad (18pts): Deep vs superficial exploration
-    - integralidad (16pts): Multi-dimensional, eclectic, plural perspective
-    - conciliacion (14pts): Integration of agreement points to reduce polarization
-    - refutacion (12pts): Recognition and response to counterarguments
-    - evidencia (10pts): Verifiable, relevant data to support claims
-    - logica (8pts): Strong, moderate relationship between claim and evidence
+    {CRITERIA_DOC}
     
-    **Total Points**: 100
+    **Total Points**: {TOTAL_POINTS}
     
     You can override by providing your own criteria list. Returns overview, per-criterion feedback.
     """

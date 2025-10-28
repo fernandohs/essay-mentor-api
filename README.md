@@ -25,9 +25,9 @@ The project currently uses local models (like Llama 3 through **Ollama**) and ca
   * **Modular architecture** (routers, services, adapters, prompts, models, utils).
   * **Interchangeable LLM adapters** (Ollama, OpenAI, etc.).
   * **Swagger-ready endpoints** (`/analyze`, `/guide`, `/health`).
-  * **Configurable prompts** with educational rules (never generate the student’s answer).
+  * **Configurable prompts** with educational rules (never generate the student's answer).
   * **Structured feedback** based on customizable evaluation criteria.
-  * **Bilingual-ready** (supports both Spanish and English for section names).
+  * **Bilingual-ready**: Configure default language via `DEFAULT_LANGUAGE` env variable (en/es) for all AI responses.
 
 -----
 
@@ -89,10 +89,29 @@ pip install -r requirements.txt
 
 ### 4\. Configure environment variables
 
+Create a `.env` file in the root directory with the following variables:
+
 ```bash
-cp .env.example .env
-# Edit values for Ollama or GPT usage
+# .env file
+APP_NAME=Essay Mentor API
+HOST=0.0.0.0
+PORT=8000
+CORS_ORIGINS=*
+
+# LLM Configuration
+LLM_PROVIDER=ollama
+LLM_MODEL=llama3.1
+OLLAMA_URL=http://localhost:11434
+
+# Default Language (en=English, es=Spanish)
+DEFAULT_LANGUAGE=en
+
+# Optional: OpenAI Configuration
+OPENAI_API_KEY=your_key_here
+OPENAI_MODEL=gpt-4o-mini
 ```
+
+**Important**: Set `DEFAULT_LANGUAGE` to control the default language for all AI responses (set to "es" for Spanish or "en" for English).
 
 -----
 
@@ -159,22 +178,61 @@ Content-Type: application/json
 
 -----
 
-## 🧪 Unit Testing (Optional)
+## 🧪 Testing
+
+The project includes comprehensive test coverage with pytest.
+
+### Run Tests
 
 ```bash
-pytest -q
+# Run all tests
+pytest
+
+# Run with verbose output
+pytest -v
+
+# Run with coverage report
+pytest --cov=app --cov-report=html
+
+# Run specific test file
+pytest tests/test_services_analyzer.py
+
+# Run specific test
+pytest tests/test_services_analyzer.py::TestAnalyzeAILikelihood::test_analyze_ai_likelihood_success
 ```
 
-Recommended to use Httpx for endpoint testing:
+### Test Coverage
+
+The test suite includes:
+
+- **Unit Tests**: Services, adapters, utilities
+- **Integration Tests**: API endpoints
+- **Fixtures**: Mock responses for LLM calls
+
+**Test Files:**
+- `tests/test_adapters_llm.py` - LLM adapter tests
+- `tests/test_services_analyzer.py` - Analysis service tests
+- `tests/test_services_guidance.py` - Guidance service tests
+- `tests/test_utils_json_parse.py` - JSON parsing utilities tests
+- `tests/test_utils_criteria.py` - Criteria utilities tests
+- `tests/test_utils_text_format.py` - Text formatting utilities tests
+- `tests/test_routers_integration.py` - API endpoints integration tests
+- `tests/conftest.py` - Shared fixtures and configuration
+
+**Current Status:** ✅ 104 tests passing
+
+### Example Test
 
 ```python
-from httpx import AsyncClient
+from fastapi.testclient import TestClient
 from app.main import app
 
-async def test_health():
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        res = await ac.get("/health")
-        assert res.status_code == 200
+client = TestClient(app)
+
+def test_health_endpoint():
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
 ```
 
 -----
@@ -187,8 +245,8 @@ async def test_health():
 | B | Implement prompts and utils/json\_parse.py ✅ |
 | C | LLM adapters (Ollama, OpenAI) ✅ |
 | D | Services: analyzer.py and guidance.py ✅ |
-| E | Unit & integration tests |
-| F | Dockerfile + CI/CD + deployment |
+| E | Unit & integration tests ✅ |
+| F | Dockerfile + CI/CD + deployment | optional
 
 -----
 

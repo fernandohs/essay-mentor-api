@@ -4,6 +4,11 @@ from .types import MAX_LEN, Rating
 from .guide import Language
 from app.core.config import settings as app_settings
 
+# Default criteria description for field documentation
+# Note: Using constant to avoid dependency on utils/prompts from models
+DEFAULT_CRITERIA_DESC = "originalidad (22pts), profundidad (18pts), integralidad (16pts), conciliacion (14pts), refutacion (12pts), evidencia (10pts), logica (8pts)"
+
+
 #Requests
 class AILikelihoodRequest(BaseModel):
     text: Annotated[str, Field(min_length=1, max_length=MAX_LEN, strip_whitespace=True)]
@@ -13,7 +18,7 @@ class FeedbackRequest(BaseModel):
     text: Annotated[str, Field(min_length=1, max_length=MAX_LEN, strip_whitespace=True)]
     criteria: Optional[List[str]] = Field(
         default=None,
-        description="Optional list of criteria to evaluate. If not provided, uses default criteria: originalidad (22pts), profundidad (18pts), integralidad (16pts), conciliacion (14pts), refutacion (12pts), evidencia (10pts), logica (8pts)"
+        description=f"Optional list of criteria to evaluate. If not provided, uses default criteria: {DEFAULT_CRITERIA_DESC}"
     )
     language: Language = Field(default=app_settings.DEFAULT_LANGUAGE, description="Language for the feedback (en=English, es=Spanish)")
 

@@ -9,6 +9,7 @@ from .guide import (
     SectionCheckRequest, SectionAdviceResponse,
     Language,
 )
+from .criterion import CriterionDefinition, AchievementLevel
 
 __all__ = [
     "MAX_LEN", "Section", "Rating",
@@ -18,4 +19,5 @@ __all__ = [
     "GuideRequest", "GuidanceResponse",
     "SectionCheckRequest", "SectionAdviceResponse",
     "Language",
+    "CriterionDefinition", "AchievementLevel",
 ]

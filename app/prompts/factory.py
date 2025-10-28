@@ -11,7 +11,7 @@ This module provides functions to generate contextual prompts for:
 from typing import List, Optional
 from app.models.types import Section
 from app.core.config import settings
-from app.prompts.rubric_criteria import ESSAY_RUBRIC_CRITERIA, DEFAULT_CRITERIA
+from app.prompts.criteria_data import ESSAY_RUBRIC_CRITERIA, DEFAULT_CRITERIA
 
 
 # Educational rule to prevent LLM from doing student's work

@@ -85,4 +85,4 @@ def test_llm(question: str = Body(..., embed=True), temperature: Optional[float]
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al consultar Ollama: {e}")
+        raise HTTPException(status_code=500, detail=f"Error connecting to Ollama: {e}")

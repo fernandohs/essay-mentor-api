@@ -23,6 +23,14 @@ class Settings(BaseSettings):
     LLM_TEMP_CREATIVE: float = 0.6       # Balanced creativity for guidance and suggestions (essay improvement tips)
     LLM_TEMP_HIGHLY_CREATIVE: float = 0.9  # High creativity, maximum randomness (brainstorming, idea generation)
     
+    # LLM Token Limits (use case specific)
+    # Use these semantic constants for consistent token limits across the application
+    LLM_TOKENS_SHORT: int = 256      # Short responses (status messages, brief confirmations)
+    LLM_TOKENS_DEFAULT: int = 512    # Default for general responses (AI likelihood detection)
+    LLM_TOKENS_STRUCTURED: int = 1024 # Structured data responses (guidance, section advice)
+    LLM_TOKENS_EXTENDED: int = 2048   # Extended responses (essay feedback with multiple criteria)
+    LLM_TOKENS_LONG: int = 4096      # Long-form content (comprehensive analysis, detailed reports)
+    
     # Language Settings
     DEFAULT_LANGUAGE: str = "es"  # Default language for LLM responses (en=English, es=Spanish)
 
