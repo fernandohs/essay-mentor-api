@@ -42,11 +42,16 @@ def analyze_ai_likelihood(text: str, language: Optional[str] = None) -> AILikeli
         # 1. Generate prompt using factory
         prompt = generate_prompt_for_ai_detection(text, language)
         
-        # 2. Call LLM with focused temperature for precision
-        llm_adapter = get_llm_adapter()
+        # 2. Get specific model for AI detection function
+        provider, model = settings.get_model_for_function("ai_detection")
+        llm_adapter = get_llm_adapter(provider=provider, model=model)
+        
+        # 3. Call LLM with focused temperature for precision
         llm_response = llm_adapter.generate(
             prompt, 
-            temperature=settings.LLM_TEMP_FOCUSED
+            temperature=settings.LLM_TEMP_FOCUSED,
+            function="ai_detection",
+            use_fallback=True
         )
         
         # 3. Parse JSON response
@@ -94,12 +99,17 @@ def generate_essay_feedback(text: str, criteria: Optional[List[str]] = None, lan
         # 1. Generate prompt using factory
         prompt = generate_prompt_for_feedback(text, criteria, language)
         
-        # 2. Call LLM with balanced temperature and extended tokens for detailed feedback
-        llm_adapter = get_llm_adapter()
+        # 2. Get specific model for feedback function
+        provider, model = settings.get_model_for_function("feedback")
+        llm_adapter = get_llm_adapter(provider=provider, model=model)
+        
+        # 3. Call LLM with balanced temperature and extended tokens for detailed feedback
         llm_response = llm_adapter.generate(
             prompt, 
             temperature=settings.LLM_TEMP_BALANCED,
-            num_predict=settings.LLM_TOKENS_EXTENDED  # Extended responses for 7 criteria with detailed evaluations
+            num_predict=settings.LLM_TOKENS_EXTENDED,
+            function="feedback",
+            use_fallback=True
         )
         
         # 3. Parse JSON response

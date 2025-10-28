@@ -41,12 +41,17 @@ def get_section_guidance(section: Section, language: str = "en") -> GuidanceResp
         # 1. Generate prompt using factory
         prompt = generate_prompt_for_guidance(section, language)
         
-        # 2. Call LLM with creative temperature and structured tokens for guidance responses
-        llm_adapter = get_llm_adapter()
+        # 2. Get specific model for guidance function
+        provider, model = settings.get_model_for_function("guidance")
+        llm_adapter = get_llm_adapter(provider=provider, model=model)
+        
+        # 3. Call LLM with creative temperature and structured tokens for guidance responses
         llm_response = llm_adapter.generate(
             prompt, 
             temperature=settings.LLM_TEMP_CREATIVE,
-            num_predict=settings.LLM_TOKENS_STRUCTURED  # Structured data responses (guidance with steps, checklist, examples)
+            num_predict=settings.LLM_TOKENS_STRUCTURED,
+            function="guidance",
+            use_fallback=True
         )
         
         # 3. Parse JSON response
@@ -94,12 +99,17 @@ def check_section_quality(section: Section, text: str, language: Optional[str] =
         # 1. Generate prompt using factory
         prompt = generate_prompt_for_section_check(section, text, language)
         
-        # 2. Call LLM with creative temperature and structured tokens for feedback
-        llm_adapter = get_llm_adapter()
+        # 2. Get specific model for section check function
+        provider, model = settings.get_model_for_function("section_check")
+        llm_adapter = get_llm_adapter(provider=provider, model=model)
+        
+        # 3. Call LLM with creative temperature and structured tokens for feedback
         llm_response = llm_adapter.generate(
             prompt, 
             temperature=settings.LLM_TEMP_CREATIVE,
-            num_predict=settings.LLM_TOKENS_STRUCTURED  # Structured data responses (section advice with strengths, issues, questions)
+            num_predict=settings.LLM_TOKENS_STRUCTURED,
+            function="section_check",
+            use_fallback=True
         )
         
         # 3. Parse JSON response

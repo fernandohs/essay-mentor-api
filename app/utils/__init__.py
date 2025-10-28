@@ -20,6 +20,17 @@ from .text_format import (
     clean_and_validate_text,
     format_text_for_api,
 )
+from .token_tracker import (
+    get_token_tracker,
+    estimate_tokens,
+    track_token_usage,
+)
+from .fallback_manager import (
+    get_fallback_manager,
+    RetryableError,
+    NonRetryableError,
+    FallbackResult,
+)
 
 __all__ = [
     "clean_json_string",
@@ -38,5 +49,12 @@ __all__ = [
     "validate_text_length",
     "clean_and_validate_text",
     "format_text_for_api",
+    "get_token_tracker",
+    "estimate_tokens",
+    "track_token_usage",
+    "get_fallback_manager",
+    "RetryableError",
+    "NonRetryableError",
+    "FallbackResult",
 ]
 

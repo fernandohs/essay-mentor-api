@@ -19,7 +19,7 @@ class TestLLMAdapter:
         
         assert adapter.provider == settings.LLM_PROVIDER
         assert adapter.model == settings.LLM_MODEL
-        assert adapter.base_url == settings.OLLAMA_URL
+        assert adapter._adapter is not None
 
     def test_init_custom_provider(self):
         """Test adapter initialization with custom provider."""
@@ -27,7 +27,7 @@ class TestLLMAdapter:
         
         assert adapter.provider == "ollama"
 
-    @patch('app.adapters.llm_adapter.requests.post')
+    @patch('app.adapters.providers.ollama.requests.post')
     def test_generate_ollama_success(self, mock_post):
         """Test successful text generation with Ollama."""
         # Setup mock response
@@ -48,7 +48,7 @@ class TestLLMAdapter:
         assert "score" in result or "75" in result
         mock_post.assert_called_once()
 
-    @patch('app.adapters.llm_adapter.requests.post')
+    @patch('app.adapters.providers.ollama.requests.post')
     def test_generate_ollama_with_temperature(self, mock_post):
         """Test generation with custom temperature."""
         mock_response = Mock()
@@ -63,7 +63,7 @@ class TestLLMAdapter:
         call_args = mock_post.call_args
         assert call_args[1]['json']['options']['temperature'] == 0.8
 
-    @patch('app.adapters.llm_adapter.requests.post')
+    @patch('app.adapters.providers.ollama.requests.post')
     def test_generate_ollama_with_num_predict(self, mock_post):
         """Test generation with custom num_predict."""
         mock_response = Mock()
@@ -78,7 +78,7 @@ class TestLLMAdapter:
         call_args = mock_post.call_args
         assert call_args[1]['json']['options']['num_predict'] == 1024
 
-    @patch('app.adapters.llm_adapter.requests.post')
+    @patch('app.adapters.providers.ollama.requests.post')
     def test_generate_ollama_connection_error(self, mock_post):
         """Test handling of connection error."""
         mock_post.side_effect = requests.exceptions.ConnectionError("Connection failed")
@@ -90,7 +90,7 @@ class TestLLMAdapter:
 
         assert "Connection failed" in str(exc_info.value)
 
-    @patch('app.adapters.llm_adapter.requests.post')
+    @patch('app.adapters.providers.ollama.requests.post')
     def test_generate_ollama_timeout(self, mock_post):
         """Test handling of timeout error."""
         mock_post.side_effect = requests.exceptions.Timeout("Request timeout")
@@ -100,7 +100,7 @@ class TestLLMAdapter:
         with pytest.raises(ConnectionError):
             adapter.generate("Test")
 
-    @patch('app.adapters.llm_adapter.requests.post')
+    @patch('app.adapters.providers.ollama.requests.post')
     def test_generate_ollama_empty_response(self, mock_post):
         """Test handling of empty response."""
         mock_response = Mock()
@@ -115,14 +115,12 @@ class TestLLMAdapter:
 
     def test_generate_unsupported_provider(self):
         """Test error with unsupported provider."""
-        adapter = LLMAdapter(provider="unsupported")
-        
         with pytest.raises(ValueError) as exc_info:
-            adapter.generate("Test")
+            adapter = LLMAdapter(provider="unsupported")
         
         assert "Unsupported LLM provider" in str(exc_info.value)
 
-    @patch('app.adapters.llm_adapter.requests.post')
+    @patch('app.adapters.providers.ollama.requests.post')
     def test_generate_uses_default_config(self, mock_post):
         """Test that default config values are used when not specified."""
         mock_response = Mock()
@@ -143,25 +141,39 @@ class TestLLMAdapter:
 class TestGetLLMAdapter:
     """Tests for get_llm_adapter function."""
 
-    def test_get_llm_adapter_singleton(self):
-        """Test that get_llm_adapter returns singleton instance."""
-        # Clear any existing singleton
-        import app.adapters.llm_adapter as llm_module
-        llm_module._llm_adapter = None
+    def test_get_llm_adapter_default_provider(self):
+        """Test that get_llm_adapter returns adapter with default settings."""
+        adapter = get_llm_adapter()
 
-        adapter1 = get_llm_adapter()
-        adapter2 = get_llm_adapter()
+        assert adapter.provider == settings.LLM_PROVIDER
+        assert adapter.model == settings.LLM_MODEL
 
-        assert adapter1 is adapter2
+    def test_get_llm_adapter_with_custom_provider(self):
+        """Test adapter creation with custom provider."""
+        adapter = get_llm_adapter(provider="openai")
 
-    def test_get_llm_adapter_multiple_calls_same_instance(self):
-        """Test multiple calls return the same instance."""
-        # Clear singleton
-        import app.adapters.llm_adapter as llm_module
-        llm_module._llm_adapter = None
+        assert adapter.provider == "openai"
 
-        adapters = [get_llm_adapter() for _ in range(5)]
+    def test_get_llm_adapter_with_custom_model(self):
+        """Test adapter creation with custom model."""
+        adapter = get_llm_adapter(model="gpt-4o")
 
-        # All should be the same instance
-        assert all(adapter is adapters[0] for adapter in adapters[1:])
+        assert adapter.model == "gpt-4o"
+
+    def test_get_llm_adapter_with_custom_provider_and_model(self):
+        """Test adapter creation with both custom provider and model."""
+        adapter = get_llm_adapter(provider="openai", model="gpt-3.5-turbo")
+
+        assert adapter.provider == "openai"
+        assert adapter.model == "gpt-3.5-turbo"
+
+    def test_get_llm_adapter_with_qwen2_5_provider(self):
+        """Test adapter creation with qwen2.5 provider."""
+        adapter = get_llm_adapter(provider="qwen2.5", model="qwen2.5")
+
+        assert adapter.provider == "qwen2.5"
+        assert adapter.model == "qwen2.5"
+        assert adapter._adapter is not None
+        assert adapter._adapter.base_url == settings.OLLAMA_URL
+        assert adapter._adapter.api_key is None
 

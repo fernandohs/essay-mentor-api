@@ -3,8 +3,8 @@ from .factory import (
     generate_prompt_for_feedback,
     generate_prompt_for_guidance,
     generate_prompt_for_section_check,
-    EDUCATIONAL_RULE,
 )
+from .generators.constants import EDUCATIONAL_RULE
 from .criteria_data import ESSAY_RUBRIC_CRITERIA, DEFAULT_CRITERIA, TOTAL_POINTS
 
 __all__ = [

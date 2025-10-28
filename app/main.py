@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi import Body, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.routers import meta, analyze, guide
+from app.routers import meta, analyze, guide, usage
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -21,6 +21,7 @@ app.add_middleware(
 )
 
 app.include_router(meta.router)
+app.include_router(usage.router)
 app.include_router(analyze.router)
 app.include_router(guide.router)
 
