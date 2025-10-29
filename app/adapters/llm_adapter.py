@@ -14,11 +14,13 @@ from app.adapters.base import BaseLLMAdapter
 # Import and register providers
 from app.adapters.providers.ollama import OllamaAdapter
 from app.adapters.providers.openai import OpenAIAdapter
+from app.adapters.providers.langchain_adapter import LangChainAdapter
 
 # Register providers
 LLMProviderRegistry.register("ollama", OllamaAdapter)
 LLMProviderRegistry.register("openai", OpenAIAdapter)
 LLMProviderRegistry.register("qwen2.5", OllamaAdapter)  # Qwen uses Ollama
+LLMProviderRegistry.register("langchain", LangChainAdapter)  # LangChain for advanced features
 
 
 class LLMAdapter:

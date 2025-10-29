@@ -50,6 +50,56 @@ def extract_json_from_text(raw_text: str) -> Optional[str]:
     return None
 
 
+def extract_valid_json_from_truncated(text: str) -> Optional[Dict[str, Any]]:
+    """
+    Extract valid JSON from truncated text by progressively removing incomplete fields.
+    
+    Args:
+        text: Potentially truncated JSON text
+        
+    Returns:
+        Parsed JSON dict if possible, None otherwise
+    """
+    # Try to parse progressively smaller chunks
+    # Look for the opening brace and try to find a valid closing brace
+    start_idx = text.find('{')
+    if start_idx == -1:
+        return None
+    
+    # Try to find matching closing brace
+    depth = 0
+    last_valid_pos = -1
+    
+    for i in range(start_idx, len(text)):
+        if text[i] == '{':
+            depth += 1
+        elif text[i] == '}':
+            depth -= 1
+            if depth == 0:
+                last_valid_pos = i
+                break
+    
+    # If we found a complete JSON object, try to parse it
+    if last_valid_pos > 0:
+        json_str = text[start_idx:last_valid_pos + 1]
+        try:
+            return json.loads(json_str)
+        except json.JSONDecodeError:
+            pass
+    
+    # Try to manually close the JSON by removing trailing incomplete fields
+    # Look for the last complete field (ends with } or , followed by key)
+    for match in re.finditer(r'"\s*:\s*[^,}]+,', text[start_idx:]):
+        # Get text up to this point and close it
+        potential_json = text[start_idx:start_idx + match.end() - 1] + '}'
+        try:
+            return json.loads(potential_json)
+        except json.JSONDecodeError:
+            continue
+    
+    return None
+
+
 def safe_json_parse(text: str) -> Dict[str, Any]:
     """
     Safely parse JSON from text with multiple fallback strategies.
@@ -79,6 +129,16 @@ def safe_json_parse(text: str) -> Dict[str, Any]:
             # If it's a list, try to use first element if it's a dict
             if len(parsed) > 0 and isinstance(parsed[0], dict):
                 return parsed[0]
+            # If it's a list of strings or other types, wrap it
+            # This handles cases where LLM returns something like ["response"]
+            if len(parsed) == 1 and isinstance(parsed[0], str):
+                # Try to parse the string as JSON
+                try:
+                    inner_json = json.loads(parsed[0])
+                    if isinstance(inner_json, dict):
+                        return inner_json
+                except (json.JSONDecodeError, TypeError):
+                    pass
             # Debug: log what we got
             print(f"DEBUG: Got a list with {len(parsed)} items")
             if len(parsed) > 0:
@@ -131,6 +191,11 @@ def safe_json_parse(text: str) -> Dict[str, Any]:
                             return json.loads(json_str)
                         except json.JSONDecodeError:
                             break
+    
+    # Strategy 5: Try to extract valid JSON from potentially truncated text
+    truncated_json = extract_valid_json_from_truncated(text)
+    if truncated_json:
+        return truncated_json
     
     # All strategies failed
     raise ValueError(f"Could not parse JSON from text: {text[:200]}...")

@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi import Body, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.routers import meta, analyze, guide, usage
+from app.routers import meta, analyze, guide, usage, advanced
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -24,6 +24,7 @@ app.include_router(meta.router)
 app.include_router(usage.router)
 app.include_router(analyze.router)
 app.include_router(guide.router)
+app.include_router(advanced.router)  # LangChain advanced features
 
 @app.post("/llm-test")
 def test_llm(question: str = Body(..., embed=True), temperature: Optional[float] = Body(None, embed=True)):

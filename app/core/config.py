@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     
     # LLM Generation Parameters - Default settings
     LLM_TEMPERATURE: float = 0.3  # Default temperature for general use cases
-    LLM_NUM_PREDICT: int = 512    # Maximum number of tokens to generate (increased for complete responses)
+    LLM_NUM_PREDICT: int = 4096    # Maximum number of tokens to generate (increased for complete responses)
     
     # LLM Temperature Presets (creativity levels)
     # Use these semantic constants to control AI creativity vs precision
